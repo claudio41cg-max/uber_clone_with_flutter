@@ -30,6 +30,11 @@ jobs:
           java -version
       - name: Restore project packages
         run: flutter pub get
+      - name: Patch obsolete geocoder Android Gradle dependency in build cache only
+        run: |
+          set -eu
+          find "$HOME/.pub-cache" -path '*/geocoder-*/android/build.gradle' -print -exec sed -i 's/com.android.tools.build:gradle:2\.3\.3/com.android.tools.build:gradle:3.2.1/g' {} \;
+          find "$HOME/.pub-cache" -path '*/geocoder-*/android/build.gradle' -exec grep -n 'com.android.tools.build:gradle' {} \;
       - name: Build original Android debug APK
         run: flutter build apk --debug
       - name: Upload APK if successful
